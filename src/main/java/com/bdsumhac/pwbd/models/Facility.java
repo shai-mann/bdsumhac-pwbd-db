@@ -4,6 +4,10 @@ import com.bdsumhac.pwbd.utils.AbstractIdEntity;
 import jakarta.persistence.*;
 import java.util.Set;
 
+/**
+ * Contains the entity model connected to the Facilities table. Stores data about a single
+ * treatment facility.
+ */
 @Entity
 @Table(name = "facilities")
 public class Facility extends AbstractIdEntity {

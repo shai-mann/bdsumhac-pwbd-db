@@ -5,6 +5,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+/**
+ * Contains the entity model connected to the Flags table. Stores data about a single
+ * flag for a facility, and what that flag means in the context of a {@link Facility}.
+ */
 @Entity
 @Table(name = "flags")
 public class Flag extends AbstractIdEntity {

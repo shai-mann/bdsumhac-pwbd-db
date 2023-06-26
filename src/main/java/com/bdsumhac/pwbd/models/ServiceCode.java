@@ -5,6 +5,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+/**
+ * Contains the entity model connected to the ServiceCodes table. Stores data about a single
+ * Service Code, and what the code means in the context of a {@link Facility}.
+ */
 @Entity
 @Table(name = "service_codes")
 public class ServiceCode extends AbstractIdEntity {
