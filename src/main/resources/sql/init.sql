@@ -6,7 +6,7 @@ drop table service_codes;
 create table service_codes (
     id identity primary key,
     code varchar(4) not null,
-    "name" varchar(128) not null
+    name varchar(128) not null
 );
 
 create table flags (
@@ -22,7 +22,7 @@ create table facilities (
     street1 varchar(128) not null,
     street2 varchar(128),
     city varchar(128) not null,
-    "state" varchar(128) not null,
+    state varchar(128) not null,
     zip int not null,
     zip4 int,
     county varchar(128) not null,
