@@ -47,7 +47,7 @@ create table facility_flags (
 create table facility_edits (
     id identity primary key,
     facility int references facilities (id),
-    "time" timestamp,
+    time timestamp,
     email varchar(128),
     pwbd boolean  -- the value it was edited to
 )
