@@ -1,4 +1,5 @@
 drop table facility_flags;
+drop table facility_edits;
 drop table facilities;
 drop table flags;
 drop table service_codes;
@@ -33,7 +34,8 @@ create table facilities (
     website varchar(128) not null,
     latitude float not null,
     longitude float not null,
-    type_facility int references service_codes (id)
+    type_facility int references service_codes (id),
+    pwbd boolean
 );
 
 create table facility_flags (
@@ -41,3 +43,11 @@ create table facility_flags (
     facility int references facilities (id),
     flag int references flags (id)
 );
+
+create table facility_edits (
+    id identity primary key,
+    facility int references facilities (id),
+    "time" timestamp,
+    email varchar(128),
+    pwbd boolean  -- the value it was edited to
+)

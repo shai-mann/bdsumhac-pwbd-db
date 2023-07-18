@@ -72,6 +72,9 @@ public class Facility extends AbstractIdEntity {
     )
     private Set<Flag> flags;
 
+    @Column
+    private boolean pwbd;
+
     public String getName1() {
         return name1;
     }
@@ -216,4 +219,11 @@ public class Facility extends AbstractIdEntity {
         this.flags = flags;
     }
 
+    public boolean isPwbd() {
+        return pwbd;
+    }
+
+    public void setPwbd(boolean pwbd) {
+        this.pwbd = pwbd;
+    }
 }
