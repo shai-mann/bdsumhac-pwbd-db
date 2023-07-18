@@ -1,7 +1,6 @@
 package com.bdsumhac.pwbd.utils;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
 
 /**
  * Abstracts the behaviour of standard ID-based entities in the codebase.
