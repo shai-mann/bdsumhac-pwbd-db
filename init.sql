@@ -1,7 +1,11 @@
 drop table facility_flags;
+
 drop table facility_edits;
+
 drop table facilities;
+
 drop table flags;
+
 drop table service_codes;
 
 create table service_codes (
@@ -49,5 +53,5 @@ create table facility_edits (
     facility int references facilities (id),
     time timestamp,
     email varchar(128),
-    pwbd boolean  -- the value it was edited to
+    pwbd boolean -- the value it was edited to
 )
