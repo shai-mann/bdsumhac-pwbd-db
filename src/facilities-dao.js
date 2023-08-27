@@ -41,6 +41,15 @@ export const createFacilities = async () => {
     }
   })
 
+  // create in batches
+  for (let i = 0; i < formatted.length; i += 999) {
+    i = Math.min(i, formatted.length - 999)
+    await facilitiesModel
+      .insertMany(formatted.slice(i, i + 999))
+      .then((docs) => docs.forEach(d => console.log(`[DATA CREATION] Created new Facility with ID ${d._id}`)))
+      .catch((error) => console.log(error));
+  }
+
   await facilitiesModel
       .insertMany(formatted)
       .then((docs) => docs.forEach(d => console.log(`[DATA CREATION] Created new Facility with ID ${d._id}`)))
