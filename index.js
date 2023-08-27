@@ -14,6 +14,7 @@ mongoose.connect(CONNECTION_STRING);
 
 const app = express();
 app.use(express.json());
+app.disable('X-Forwarded-For')
 console.log("allowing access for " + process.env.FRONTEND_URL);
 app.use(
   cors({
