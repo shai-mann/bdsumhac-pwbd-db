@@ -49,4 +49,4 @@ AppController(app);
 app.listen(process.env.PORT || 4000);
 
 // temp init data
-// createFacilities();
+createFacilities();
