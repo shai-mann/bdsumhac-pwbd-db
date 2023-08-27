@@ -8,7 +8,7 @@ import { createFacilities } from "./src/facilities-dao.js";
 import rateLimit from "express-rate-limit";
 
 const CONNECTION_STRING =
-  (process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017") + "/bdsumhac-db";
+  (process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/bdsumhac-db");
 console.log("connecting to " + CONNECTION_STRING);
 mongoose.connect(CONNECTION_STRING);
 

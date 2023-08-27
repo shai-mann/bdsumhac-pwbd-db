@@ -17,12 +17,14 @@ export const deleteFacility = (id) => facilitiesModel.deleteOne({ _id: id });
 export const createFacilities = async () => {
   const existing = await facilitiesModel.count();
   if (existing !== 0) {
-    console.log(`[DATA CREATION] Skipping - ${existing} facilities documents found`)
+    console.log(
+      `[DATA CREATION] Skipping - ${existing} facilities documents found`
+    );
     return;
   }
 
   const data = JSON.parse(fs.readFileSync("./assets/converted.json"));
-  const formatted = data.map(x => {
+  const formatted = data.map((x) => {
     return {
       name1: x.name1,
       name2: x.name2,
@@ -38,20 +40,19 @@ export const createFacilities = async () => {
       latitude: x.latitude,
       longitude: x.longitude,
       pwbd: false,
-    }
-  })
+    };
+  });
 
   // create in batches
+  let count = 0;
   for (let i = 0; i < formatted.length; i += 999) {
-    i = Math.min(i, formatted.length - 999)
     await facilitiesModel
       .insertMany(formatted.slice(i, i + 999))
-      .then((docs) => docs.forEach(d => console.log(`[DATA CREATION] Created new Facility with ID ${d._id}`)))
+      .then((docs) => {
+        count += docs.length
+        console.log(`[DATA CREATION] Created ${docs.length} documents.`);
+      })
       .catch((error) => console.log(error));
   }
-
-  await facilitiesModel
-      .insertMany(formatted)
-      .then((docs) => docs.forEach(d => console.log(`[DATA CREATION] Created new Facility with ID ${d._id}`)))
-      .catch((error) => console.log(error));
+  console.log(`[DATA CREATION] Created a total of ${count} facility documents.`)
 };
