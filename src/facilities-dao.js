@@ -1,13 +1,15 @@
 import { facilitiesModel } from "./models.js";
 import fs from "fs";
 
-export const searchFacilities = (query) =>
-  facilitiesModel.find({
-    city: query?.city,
-    state: query?.state,
-    zip: query?.zip,
-    pwbd: query?.pwbd,
+export const searchFacilities = (query, pagination) =>
+  facilitiesModel.find(query, [], {
+    limit: pagination.itemsPerPage,
+    skip: pagination.itemsPerPage * (pagination.page - 1),
   });
+
+export const findFacilityById = (id) => facilitiesModel.findById(id);
+
+export const countFacilities = (query) => facilitiesModel.countDocuments(query);
 
 export const updateFacility = (id, pwbd) =>
   facilitiesModel.updateOne({ _id: id }, { $set: { pwbd: pwbd } });
@@ -45,15 +47,17 @@ export const createFacilities = async () => {
 
   // create in batches
   let count = 0;
-  const chunkSize = 999
+  const chunkSize = 999;
   for (let i = 0; i < formatted.length; i += chunkSize) {
     await facilitiesModel
       .insertMany(formatted.slice(i, i + chunkSize))
       .then((docs) => {
-        count += docs.length
+        count += docs.length;
         console.log(`[DATA CREATION] Created ${docs.length} documents.`);
       })
       .catch((error) => console.log(error));
   }
-  console.log(`[DATA CREATION] Created a total of ${count} facility documents.`)
+  console.log(
+    `[DATA CREATION] Created a total of ${count} facility documents.`
+  );
 };

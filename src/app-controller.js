@@ -5,26 +5,84 @@ const AppController = (app) => {
   // filter and find all facilities
   // PARAMS: filter (body)
   //   filter: {
-  //     city: String (optional),
-  //     state: String (optional),
-  //     zip: String (optional),
+  //     city: String[] (optional),
+  //     state: String[] (optional),
+  //     zip: String[] (optional),
   //     pwbd: Boolean (optional)
   //   }
-  const getFacilities = async (req, res) => {};
+  //   pagination: {
+  //     page: Number, - starts at page 1
+  //     itemsPerPage: Number,
+  //     sort: String (Optional, default name1)
+  //   }
+  const getFacilities = async (req, res) => {
+    const exists = (field) => field && field.length !== 0;
+
+    const filter = req.body.filter;
+    const formattedFilter = {
+      city: exists(filter.city) ? { $in: filter.city } : null,
+      state: exists(filter.state) ? { $in: filter.state } : null,
+      zip: exists(filter.zip) ? { $in: filter.zip } : null,
+      pwbd: filter.pwbd || false,
+    };
+
+    Object.keys(formattedFilter).forEach((key) => {
+      if (formattedFilter[key] === null) {
+        delete formattedFilter[key];
+      }
+    });
+
+    const pagination = req.body.pagination;
+    const out = await facilitiesDao.searchFacilities(
+      formattedFilter,
+      pagination
+    );
+    const totalItemsFound = await facilitiesDao.countFacilities(
+      formattedFilter
+    );
+    return res.json({
+      pages: Math.ceil(totalItemsFound / pagination.itemsPerPage),
+      data: out,
+    });
+  };
 
   // find specific facility by a given ID
-  // PARAMS: id (query)
+  // PARAMS: id (in path)
   const getFacility = async (req, res) => {
-    
+    const id = req.params.id;
+    try {
+      const out = await facilitiesDao.findFacilityById(id);
+      if (!out) return res.sendStatus(500);
+
+      return res.json(out);
+    } catch (error) {
+      return res.sendStatus(500);
+    }
   };
 
   // update the PWBD value of a given facility. Must have an email attached.
-  // PARAMS: username (query), pwbd (query)
-  const updateFacility = async (req, res) => {};
+  // PARAMS: id (in path), username (query), pwbd (query)
+  const updateFacility = async (req, res) => {
+    const id = req.params.id;
+    const email = req.query.email;
+    const pwbd = req.query.pwbd;
+
+    if (!email || email === "") return res.sendStatus(401);
+    try {
+      const facility = await facilitiesDao.findFacilityById(id);
+      if (!facility) res.sendStatus(500);
+    } catch (error) {
+      res.sendStatus(500);
+    }
+
+    await facilitiesDao.updateFacility(id, pwbd);
+    await historyDao.createEdit({ email: email, facility: id, pwbd: pwbd });
+    return res.sendStatus(200);
+  };
 
   app.get("/api/facilities", getFacilities);
   app.get("/api/facilities/:id", getFacility);
-  app.post("/api/facilities", updateFacility);
+  app.post("/api/facilities/:id", updateFacility);
 };
 
 export default AppController;
