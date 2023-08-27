@@ -45,9 +45,10 @@ export const createFacilities = async () => {
 
   // create in batches
   let count = 0;
-  for (let i = 0; i < formatted.length; i += 999) {
+  const chunkSize = 999
+  for (let i = 0; i < formatted.length; i += chunkSize) {
     await facilitiesModel
-      .insertMany(formatted.slice(i, i + 999))
+      .insertMany(formatted.slice(i, i + chunkSize))
       .then((docs) => {
         count += docs.length
         console.log(`[DATA CREATION] Created ${docs.length} documents.`);
