@@ -7,7 +7,7 @@ const AppController = (app) => {
   //   filter: {
   //     city: String[] (optional),
   //     state: String[] (optional),
-  //     zip: String[] (optional),
+  //     zip: String (optional),
   //     pwbd: Boolean (optional)
   //   }
   //   pagination: {
@@ -22,7 +22,7 @@ const AppController = (app) => {
     const formattedFilter = {
       city: exists(filter.city) ? { $in: filter.city } : null,
       state: exists(filter.state) ? { $in: filter.state } : null,
-      zip: exists(filter.zip) ? { $in: filter.zip } : null,
+      zip: filter.zip || null,
       pwbd: filter.pwbd || false,
     };
 
@@ -80,9 +80,15 @@ const AppController = (app) => {
     return res.sendStatus(200);
   };
 
-  app.get("/api/facilities", getFacilities);
+  const getCities = async (req, res) => {
+    const cities = await facilitiesDao.findCities();
+    return res.json(cities);
+  };
+
+  app.post("/api/facilities", getFacilities);
   app.get("/api/facilities/:id", getFacility);
   app.post("/api/facilities/:id", updateFacility);
+  app.get("/api/cities", getCities);
 };
 
 export default AppController;

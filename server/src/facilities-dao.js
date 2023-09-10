@@ -16,6 +16,8 @@ export const updateFacility = (id, pwbd) =>
 
 export const deleteFacility = (id) => facilitiesModel.deleteOne({ _id: id });
 
+export const findCities = () => facilitiesModel.distinct('city')
+
 export const createFacilities = async () => {
   const existing = await facilitiesModel.count();
   if (existing !== 0) {
