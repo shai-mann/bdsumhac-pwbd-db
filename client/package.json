@@ -15,6 +15,7 @@
     "primereact": "^9.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-loader-spinner": "^5.4.5",
     "react-scripts": "5.0.1",
     "react-simple-maps": "^3.0.0",
     "tailwind": "^4.0.0",

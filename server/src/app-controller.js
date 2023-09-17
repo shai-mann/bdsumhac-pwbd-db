@@ -1,29 +1,27 @@
 import * as historyDao from "./history-dao.js";
 import * as facilitiesDao from "./facilities-dao.js";
 
+const exists = (field) => field && field.length !== 0;
+const stringExists = (field) => field && field !== "";
+
 const AppController = (app) => {
   // filter and find all facilities
   // PARAMS: filter (body)
-  //   filter: {
+  //   {
   //     city: String[] (optional),
   //     state: String[] (optional),
   //     zip: String (optional),
   //     pwbd: Boolean (optional)
   //   }
-  //   pagination: {
-  //     page: Number, - starts at page 1
-  //     itemsPerPage: Number,
-  //     sort: String (Optional, default name1)
-  //   }
   const getFacilities = async (req, res) => {
-    const exists = (field) => field && field.length !== 0;
-
-    const filter = req.body.filter;
+    const filter = req.body;
     const formattedFilter = {
       city: exists(filter.city) ? { $in: filter.city } : null,
       state: exists(filter.state) ? { $in: filter.state } : null,
-      zip: filter.zip || null,
-      pwbd: filter.pwbd || false,
+      zip: stringExists(filter.zip)
+        ? new RegExp(`^${filter.zip}`)
+        : null,
+      pwbd: !!filter.pwbd,
     };
 
     Object.keys(formattedFilter).forEach((key) => {
@@ -31,19 +29,12 @@ const AppController = (app) => {
         delete formattedFilter[key];
       }
     });
+    console.log(Object.keys(formattedFilter).length);
+    if (Object.keys(formattedFilter).length == 0) return res.json([]);
+    console.log(formattedFilter);
 
-    const pagination = req.body.pagination;
-    const out = await facilitiesDao.searchFacilities(
-      formattedFilter,
-      pagination
-    );
-    const totalItemsFound = await facilitiesDao.countFacilities(
-      formattedFilter
-    );
-    return res.json({
-      pages: Math.ceil(totalItemsFound / pagination.itemsPerPage),
-      data: out,
-    });
+    const out = await facilitiesDao.searchFacilities(formattedFilter);
+    return res.json(out);
   };
 
   // find specific facility by a given ID
@@ -85,10 +76,16 @@ const AppController = (app) => {
     return res.json(cities);
   };
 
+  const getStates = async (req, res) => {
+    const states = await facilitiesDao.findStates();
+    return res.json(states);
+  };
+
   app.post("/api/facilities", getFacilities);
   app.get("/api/facilities/:id", getFacility);
   app.post("/api/facilities/:id", updateFacility);
   app.get("/api/cities", getCities);
+  app.get("/api/states", getStates);
 };
 
 export default AppController;

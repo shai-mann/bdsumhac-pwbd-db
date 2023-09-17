@@ -13,12 +13,7 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import * as appService from "../services/app-service";
-
-const states = [
-  { value: "CA", label: "CA (2K)" },
-  { value: "NY", label: "NY (1.4K)" },
-  { value: "OH", label: "OH (1.1K)" },
-];
+import { ColorRing } from "react-loader-spinner";
 
 interface Facility {
   _id: string;
@@ -38,36 +33,37 @@ interface Facility {
   pwbd: boolean;
 }
 
-interface FacilityPage {
-  pages: number;
-  data: Facility[];
-}
-
 const geoUrl =
   "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
 function HomePage() {
   const [loading, setLoading] = useState(true);
+  // querying is slightly different from loading - loading is for cities and states, querying is for loading the facilities
+  const [querying, setQuerying] = useState(true);
 
   const [cities, setCities] = useState<string[]>([]);
+  const [states, setStates] = useState<string[]>([]);
 
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
   const [zip, setZip] = useState("");
   const [pwbd, setPwbd] = useState(false);
 
-  const [facilities, setFacilities] = useState<FacilityPage>({
-    pages: 0,
-    data: [],
-  });
+  const [facilities, setFacilities] = useState<Facility[]>([]);
 
   const [scaleFactor, setScaleFactor] = useState(1);
 
   useEffect(() => {
     async function load() {
       const cities = await appService.getCities();
+      const states = await appService.getStates();
       setCities(
         cities.map((c: any) => {
+          return { label: c, value: c };
+        })
+      );
+      setStates(
+        states.map((c: any) => {
           return { label: c, value: c };
         })
       );
@@ -79,21 +75,28 @@ function HomePage() {
 
   useEffect(() => {
     async function load() {
+      setQuerying(true);
       setFacilities(
         await appService.search({
-          filter: {
-            city: selectedCities,
-            state: selectedStates,
-            zip: zip,
-            pwbd: pwbd,
-          },
-          pagination: {
-            page: 1,
-            itemsPerPage: 100,
-          },
+          city: selectedCities,
+          state: selectedStates,
+          zip: zip,
+          pwbd: pwbd,
         })
       );
+      setQuerying(false);
     }
+
+    if (
+      selectedCities.length === 0 &&
+      selectedStates.length === 0 &&
+      zip === ""
+    ) {
+      setFacilities([]);
+      setQuerying(false);
+      return; // no querying with just the pwbd, since it lags out the view
+    }
+
     load();
   }, [selectedCities, selectedStates, zip, pwbd]);
 
@@ -126,7 +129,7 @@ function HomePage() {
                 filter
                 optionLabel="label"
                 display="chip"
-                className="w-full md:w-20rem"
+                virtualScrollerOptions={{ step: 100, itemSize: 43 }}
               />
               <label htmlFor="ms-cities">Cities</label>
             </span>
@@ -139,7 +142,7 @@ function HomePage() {
                 filter
                 optionLabel="label"
                 display="chip"
-                className="w-full md:w-20rem"
+                virtualScrollerOptions={{ step: 100, itemSize: 43 }}
               />
               <label htmlFor="ms-states">States</label>
             </span>
@@ -163,7 +166,10 @@ function HomePage() {
             </div>
           </div>
           <ComposableMap projection="geoAlbers" style={{ height: 400 }}>
-            <ZoomableGroup onMove={({ zoom }) => setScaleFactor(zoom)} maxZoom={15}>
+            <ZoomableGroup
+              onMove={({ zoom }) => setScaleFactor(zoom)}
+              maxZoom={500}
+            >
               <Geographies geography={geoUrl}>
                 {({ geographies }) =>
                   geographies.map((geo) => (
@@ -181,14 +187,31 @@ function HomePage() {
                   ))
                 }
               </Geographies>
-              {facilities &&
-                facilities.data.map((f) => {
+              {querying ? (
+                <ColorRing
+                  visible={querying}
+                  height="80"
+                  width="80"
+                  ariaLabel="blocks-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="blocks-wrapper"
+                  colors={[
+                    "#e15b64",
+                    "#f47e60",
+                    "#f8b26a",
+                    "#abbd81",
+                    "#849b87",
+                  ]}
+                />
+              ) : (
+                facilities.map((f) => {
                   return (
-                    <Marker coordinates={[f.longitude, f.latitude]}>
+                    <Marker coordinates={[f.longitude, f.latitude]} key={f._id}>
                       <circle r={8 / scaleFactor} fill="#F53" />
                     </Marker>
                   );
-                })}
+                })
+              )}
             </ZoomableGroup>
           </ComposableMap>
         </div>

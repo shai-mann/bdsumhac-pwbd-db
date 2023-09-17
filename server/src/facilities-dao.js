@@ -1,11 +1,7 @@
 import { facilitiesModel } from "./models.js";
 import fs from "fs";
 
-export const searchFacilities = (query, pagination) =>
-  facilitiesModel.find(query, [], {
-    limit: pagination.itemsPerPage,
-    skip: pagination.itemsPerPage * (pagination.page - 1),
-  });
+export const searchFacilities = (query) => facilitiesModel.find(query);
 
 export const findFacilityById = (id) => facilitiesModel.findById(id);
 
@@ -16,7 +12,9 @@ export const updateFacility = (id, pwbd) =>
 
 export const deleteFacility = (id) => facilitiesModel.deleteOne({ _id: id });
 
-export const findCities = () => facilitiesModel.distinct('city')
+export const findCities = () => facilitiesModel.distinct("city");
+
+export const findStates = () => facilitiesModel.distinct("state");
 
 export const createFacilities = async () => {
   const existing = await facilitiesModel.count();

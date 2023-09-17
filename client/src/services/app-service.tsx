@@ -3,16 +3,10 @@ const SERVER_API_URL =
   process.env.NODE_SERVER_URL || "http://localhost:4000/api";
 
 export interface Filter {
-  filter: {
-    city: string[];
-    state: string[];
-    zip: string;
-    pwbd: boolean;
-  };
-  pagination: {
-    page: number;
-    itemsPerPage: number;
-  };
+  city: string[];
+  state: string[];
+  zip: string;
+  pwbd: boolean;
 }
 
 export const search = async (filter: Filter) => {
@@ -27,6 +21,15 @@ export const search = async (filter: Filter) => {
 export const getCities = async () => {
   try {
     const response = await axios.get(`${SERVER_API_URL}/cities`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getStates = async () => {
+  try {
+    const response = await axios.get(`${SERVER_API_URL}/states`);
     return response.data;
   } catch (error) {
     console.log(error);
