@@ -1,0 +1,11 @@
+.geography {
+  outline: none;
+}
+
+.geography:hover {
+    outline: none;
+}
+
+.geography:pressed {
+    outline: none;
+}
