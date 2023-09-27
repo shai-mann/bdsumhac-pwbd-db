@@ -29,9 +29,7 @@ const AppController = (app) => {
         delete formattedFilter[key];
       }
     });
-    console.log(Object.keys(formattedFilter).length);
-    if (Object.keys(formattedFilter).length == 0) return res.json([]);
-    console.log(formattedFilter);
+    if (Object.keys(formattedFilter).length == 0) return res.json([]); // prevents returning all elements
 
     const out = await facilitiesDao.searchFacilities(formattedFilter);
     return res.json(out);

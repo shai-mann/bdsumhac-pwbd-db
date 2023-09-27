@@ -14,6 +14,14 @@ import {
 } from "react-simple-maps";
 import * as appService from "../services/app-service";
 import { ColorRing } from "react-loader-spinner";
+import { ScrollPanel } from "primereact/scrollpanel";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { Table } from "@mui/material";
+import Paper from "@mui/material/Paper";
 
 interface Facility {
   _id: string;
@@ -110,6 +118,7 @@ function HomePage() {
             gap: 25,
             padding: 25,
             alignItems: "center",
+            backgroundColor: "#f4f6f9",
           }}
         >
           <div
@@ -216,6 +225,73 @@ function HomePage() {
           </ComposableMap>
         </div>
       )}
+      <ScrollPanel
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          paddingRight: "15%",
+          paddingLeft: "15%",
+          backgroundColor: "#f4f6f9",
+        }}
+      >
+        {querying && facilities ? (
+          <ColorRing
+            visible={querying}
+            height="80"
+            width="80"
+            ariaLabel="blocks-loading"
+            wrapperClass="blocks-wrapper"
+            colors={["#DDD", "#DDD", "#DDD", "#DDD", "#DDD"]}
+          />
+        ) : (
+          <TableContainer component={Paper}>
+            <Table
+              sx={{ minWidth: 700 }}
+              size="small"
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell align="right">PWBD?</TableCell>
+                  <TableCell align="right">Facility Name</TableCell>
+                  <TableCell align="right">Street Address</TableCell>
+                  <TableCell align="right">City</TableCell>
+                  <TableCell align="right">State</TableCell>
+                  <TableCell align="right">Zip</TableCell>
+                  <TableCell align="right">Phone</TableCell>
+                  <TableCell align="right">Website</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {facilities.map((f) => (
+                  <TableRow
+                    key={f._id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {f.pwbd}
+                    </TableCell>
+                    <TableCell align="right">{f.name1}</TableCell>
+                    <TableCell align="right">
+                      {f.street1}
+                      {f.street2 ? `, ${f.street2}` : ""}
+                    </TableCell>
+                    <TableCell align="right">{f.city}</TableCell>
+                    <TableCell align="right">{f.state}</TableCell>
+                    <TableCell align="right">
+                      {f.zip}
+                      {f.zip4 ? `, ${f.zip4}` : ""}
+                    </TableCell>
+                    <TableCell align="right">{f.phone}</TableCell>
+                    <TableCell align="right">{f.website}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </ScrollPanel>
     </PrimeReactProvider>
   );
 }

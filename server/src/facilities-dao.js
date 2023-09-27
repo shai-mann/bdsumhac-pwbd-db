@@ -41,7 +41,7 @@ export const createFacilities = async () => {
       website: x.website,
       latitude: x.latitude,
       longitude: x.longitude,
-      pwbd: false,
+      pwbd: undefined,
     };
   });
 
