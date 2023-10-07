@@ -1,6 +1,7 @@
 import axios from "axios";
 const SERVER_API_URL =
-  process.env.NODE_SERVER_URL || "http://localhost:4000/api";
+  process.env.REACT_APP_SERVER_URL || "http://localhost:4000/api";
+console.log("Using: " + process.env.NODE_SERVER_URL);
 
 export interface Filter {
   city: string[];
