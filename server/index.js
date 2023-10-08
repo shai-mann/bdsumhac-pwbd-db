@@ -19,9 +19,9 @@ app.use(
   cors({
     credentials: true,
     origin: process.env.FRONTEND_URL,
-    validate: { xForwardedForHeader: false },
   })
 );
+app.set("trust proxy", true);
 app.use(
   rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
