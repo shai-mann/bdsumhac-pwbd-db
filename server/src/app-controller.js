@@ -69,13 +69,11 @@ const AppController = (app) => {
 
   const getCities = async (req, res) => {
     const cities = await facilitiesDao.findCities();
-    console.log("finding cities");
     return res.json(cities);
   };
 
   const getStates = async (req, res) => {
     const states = await facilitiesDao.findStates();
-    console.log("finding states")
     return res.json(states);
   };
 
