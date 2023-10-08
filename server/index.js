@@ -15,12 +15,7 @@ mongoose.connect(CONNECTION_STRING);
 const app = express();
 app.use(express.json());
 console.log("allowing access for " + process.env.FRONTEND_URL);
-app.use(
-  cors({
-    credentials: true,
-    origin: process.env.FRONTEND_URL,
-  })
-);
+app.use(cors());
 
 const sessionOptions = {
   secret: "any string",
