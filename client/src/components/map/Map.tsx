@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import "./map.css"
+import "./map.css";
 import { ColorRing } from "react-loader-spinner";
 import {
   ComposableMap,
@@ -10,12 +10,11 @@ import {
 } from "react-simple-maps";
 import Facility from "../../models/Facility";
 
-const GEO_URL =
-  "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+const GEO_URL = "/us-topojson.json";
 
 interface FacilityMapProps {
   querying: boolean;
-  facilities: Facility[]
+  facilities: Facility[];
 }
 
 const FacilityMap: FC<FacilityMapProps> = ({ querying, facilities }) => {
