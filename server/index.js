@@ -21,14 +21,6 @@ app.use(
     origin: process.env.FRONTEND_URL,
   })
 );
-// app.set("trust proxy", true);
-app.use(
-  rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 1000,
-    message: "You exceeded 1000 requests in 1 hour",
-  })
-);
 
 const sessionOptions = {
   secret: "any string",
@@ -36,7 +28,7 @@ const sessionOptions = {
   saveUninitialized: false,
 };
 if (process.env.NODE_ENV !== "development") {
-  sessionOptions.proxy = false;
+  sessionOptions.proxy = true;
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
