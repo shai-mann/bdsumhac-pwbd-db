@@ -18,9 +18,7 @@ const AppController = (app) => {
     const formattedFilter = {
       city: exists(filter.city) ? { $in: filter.city } : null,
       state: exists(filter.state) ? { $in: filter.state } : null,
-      zip: stringExists(filter.zip)
-        ? new RegExp(`^${filter.zip}`)
-        : null,
+      zip: stringExists(filter.zip) ? new RegExp(`^${filter.zip}`) : null,
       pwbd: !!filter.pwbd,
     };
 
@@ -71,11 +69,13 @@ const AppController = (app) => {
 
   const getCities = async (req, res) => {
     const cities = await facilitiesDao.findCities();
+    console.log("finding cities");
     return res.json(cities);
   };
 
   const getStates = async (req, res) => {
     const states = await facilitiesDao.findStates();
+    console.log("finding states")
     return res.json(states);
   };
 
