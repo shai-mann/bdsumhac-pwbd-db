@@ -4,7 +4,6 @@ import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import * as appService from "../services/app-service";
-import { ColorRing } from "react-loader-spinner";
 import { ScrollPanel } from "primereact/scrollpanel";
 
 import FacilityMap from "./map/Map";
@@ -28,6 +27,9 @@ function HomePage() {
   const [pwbd, setPwbd] = useState(false);
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
+
+  const [highlightedFacility, setHighlightedFacility] =
+    useState<Facility | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -78,50 +80,50 @@ function HomePage() {
 
   return (
     <PrimeReactProvider>
-      {!loading && (
-        <div className="container">
-          <div className="filter-container">
-            <Select
-              title="Cities"
-              options={cities}
-              selectedOptions={selectedCities}
-              setSelectedOptions={setSelectedCities}
-            />
-            <Select
-              title="States"
-              options={states}
-              selectedOptions={selectedStates}
-              setSelectedOptions={setSelectedStates}
-            />
-            <TextInput
-              title="Zip (Starts with)"
-              value={zip}
-              onChange={setZip}
-            />
-            <SelectCheckBox
-              id="pwbd"
-              title="Accepts PWBD?"
-              checked={pwbd}
-              onChange={setPwbd}
-            />
-          </div>
-          <FacilityMap querying={querying} facilities={facilities} />
+      <div className="container">
+        <div className="filter-container">
+          {loading ? (
+            <p style={{ color: "#6c757d" }}>Loading Filters...</p>
+          ) : (
+            <>
+              <Select
+                title="Cities"
+                options={cities}
+                selectedOptions={selectedCities}
+                setSelectedOptions={setSelectedCities}
+              />
+              <Select
+                title="States"
+                options={states}
+                selectedOptions={selectedStates}
+                setSelectedOptions={setSelectedStates}
+              />
+              <TextInput
+                title="Zip (Starts with)"
+                value={zip}
+                onChange={setZip}
+              />
+              <SelectCheckBox
+                id="pwbd"
+                title="Accepts PWBD?"
+                checked={pwbd}
+                onChange={setPwbd}
+              />
+            </>
+          )}
         </div>
-      )}
+        <FacilityMap
+          querying={querying}
+          facilities={facilities}
+          clickCallback={setHighlightedFacility}
+        />
+      </div>
       <ScrollPanel className="results-container">
-        {querying && facilities ? (
-          <div className="flex justify-center">
-            <ColorRing
-              visible={querying}
-              height="80"
-              width="80"
-              ariaLabel="blocks-loading"
-              wrapperClass="blocks-wrapper"
-              colors={["#DDD", "#DDD", "#DDD", "#DDD", "#DDD"]}
-            />
-          </div>
-        ) : (
-          <Table facilities={facilities} />
+        {facilities && (
+          <Table
+            facilities={facilities}
+            highlightedFacility={highlightedFacility}
+          />
         )}
       </ScrollPanel>
     </PrimeReactProvider>

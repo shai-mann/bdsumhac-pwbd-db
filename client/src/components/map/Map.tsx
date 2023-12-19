@@ -5,20 +5,31 @@ import {
   ComposableMap,
   Geographies,
   Geography,
-  Marker,
   ZoomableGroup,
 } from "react-simple-maps";
 import Facility from "../../models/Facility";
+import FacilityMarker from "./FacilityMarker";
 
 const GEO_URL = "/us-topojson.json";
 
 interface FacilityMapProps {
   querying: boolean;
   facilities: Facility[];
+  clickCallback: (f: Facility) => void;
 }
 
-const FacilityMap: FC<FacilityMapProps> = ({ querying, facilities }) => {
+const FacilityMap: FC<FacilityMapProps> = ({
+  querying,
+  facilities,
+  clickCallback,
+}) => {
   const [scaleFactor, setScaleFactor] = useState(1);
+  const [hoveredMarker, setHoveredMarker] = useState<Facility>();
+  // keeping track of hovered marker allows rendering of that marker on top of all others.
+
+  const hoveredCallback = (f: Facility, hovered: boolean) => {
+    setHoveredMarker(hovered ? f : undefined);
+  };
 
   return (
     <ComposableMap projection="geoAlbers" style={{ height: 400 }}>
@@ -47,13 +58,26 @@ const FacilityMap: FC<FacilityMapProps> = ({ querying, facilities }) => {
             colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
           />
         ) : (
-          facilities.map((f) => {
-            return (
-              <Marker coordinates={[f.longitude, f.latitude]} key={f._id}>
-                <circle r={8 / scaleFactor} fill="#F53" />
-              </Marker>
-            );
-          })
+          <>
+            {facilities.map((f, i) => (
+              <FacilityMarker
+                facility={f}
+                key={i}
+                scaleFactor={scaleFactor}
+                hoveredCallback={hoveredCallback}
+                clickCallback={clickCallback}
+              />
+            ))}
+            {hoveredMarker && (
+              <FacilityMarker
+                facility={hoveredMarker}
+                key={"hovered"}
+                scaleFactor={scaleFactor}
+                hoveredCallback={hoveredCallback}
+                clickCallback={clickCallback}
+              />
+            )}
+          </>
         )}
       </ZoomableGroup>
     </ComposableMap>

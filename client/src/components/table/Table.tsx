@@ -4,15 +4,50 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Table as MaterialTable } from "@mui/material";
+import { Checkbox, Link, Table as MaterialTable } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Facility from "../../models/Facility";
+import { pink } from "@mui/material/colors";
 
 interface TableProps {
   facilities: Facility[];
+  highlightedFacility: Facility | null
 }
 
-const Table: FC<TableProps> = ({ facilities }) => {
+const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
+
+  const createFacility = (f: Facility, highlight = false) => {
+    return (<TableRow
+      key={f._id}
+      sx={{ "&:last-child td, &:last-child th": { border: 0 }, backgroundColor: highlight ? "#ffff0059" : "white" }}
+    >
+      <TableCell>
+        <Checkbox
+          value={!!f.pwbd}
+          sx={{
+            color: pink[800],
+            "&.Mui-checked": {
+              color: pink[600],
+            },
+          }}
+        />
+      </TableCell>
+      <TableCell>{f.name1}</TableCell>
+      <TableCell>
+        {f.street1}
+        {f.street2 ? `, ${f.street2}` : ""}
+        {`, ${f.city}, ${f.state}, ${f.zip}`}
+        {f.zip4 ? `-${f.zip4}` : ""}
+      </TableCell>
+      <TableCell>{f.phone}</TableCell>
+      <TableCell>
+        <Link href={f.website} variant="body2" underline="hover">
+          link
+        </Link>
+      </TableCell>
+    </TableRow>)
+  }
+
   return (
     <TableContainer component={Paper}>
       <MaterialTable
@@ -22,40 +57,22 @@ const Table: FC<TableProps> = ({ facilities }) => {
       >
         <TableHead>
           <TableRow>
-            <TableCell align="right">PWBD?</TableCell>
-            <TableCell align="right">Facility Name</TableCell>
-            <TableCell align="right">Street Address</TableCell>
-            <TableCell align="right">City</TableCell>
-            <TableCell align="right">State</TableCell>
-            <TableCell align="right">Zip</TableCell>
-            <TableCell align="right">Phone</TableCell>
-            <TableCell align="right">Website</TableCell>
+            <TableCell>PWBD?</TableCell>
+            <TableCell>Facility Name</TableCell>
+            <TableCell>Address</TableCell>
+            <TableCell>Phone</TableCell>
+            <TableCell>Website</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {facilities.map((f) => (
-            <TableRow
-              key={f._id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {f.pwbd}
-              </TableCell>
-              <TableCell align="right">{f.name1}</TableCell>
-              <TableCell align="right">
-                {f.street1}
-                {f.street2 ? `, ${f.street2}` : ""}
-              </TableCell>
-              <TableCell align="right">{f.city}</TableCell>
-              <TableCell align="right">{f.state}</TableCell>
-              <TableCell align="right">
-                {f.zip}
-                {f.zip4 ? `, ${f.zip4}` : ""}
-              </TableCell>
-              <TableCell align="right">{f.phone}</TableCell>
-              <TableCell align="right">{f.website}</TableCell>
-            </TableRow>
-          ))}
+          {highlightedFacility && createFacility(highlightedFacility, true)}
+          {facilities.map((f) => {
+            if (f !== highlightedFacility) {
+              return createFacility(f)
+            } else {
+              return <></>
+            }
+          })}
         </TableBody>
       </MaterialTable>
     </TableContainer>
