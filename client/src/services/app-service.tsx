@@ -10,6 +10,10 @@ export interface Filter {
   pwbd: boolean;
 }
 
+interface KeyValue {
+  [propName: string]: Boolean
+}
+
 export const search = async (filter: Filter) => {
   try {
     const response = await axios.post(`${SERVER_API_URL}/facilities`, filter);
@@ -36,3 +40,19 @@ export const getStates = async () => {
     console.log(error);
   }
 };
+
+export const updateFacilities = async (email: string, edits: [String, Boolean][]) => {
+  try {
+    var body: KeyValue = {}
+    for (let [id, pwbd] of edits) {
+      body = {
+        ...body,
+        [id as string]: pwbd
+      }
+    }
+    const response = await axios.post(`${SERVER_API_URL}/facilities/edit?email=${email}`, body)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
