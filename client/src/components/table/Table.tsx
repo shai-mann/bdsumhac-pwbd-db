@@ -38,9 +38,15 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateFacilities(email, editedFacilities)
-    // TODO: update facilities to reflect edits
-    setEditedFacilities([])
+    await updateFacilities(email, editedFacilities);
+    // update facilities to reflect edits
+    for (let [id, pwbd] of editedFacilities) {
+      const f = facilities.find((f) => f._id === id);
+      if (f) {
+        f.pwbd = pwbd as boolean;
+      }
+    }
+    setEditedFacilities([]);
   };
 
   const createFacility = (f: Facility, highlight = false) => {
@@ -54,7 +60,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
       >
         <TableCell>
           <Checkbox
-            value={!!f.pwbd}
+            checked={!!f.pwbd}
             sx={{
               color: pink[800],
               "&.Mui-checked": {
@@ -112,7 +118,6 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
         <MaterialTable
           sx={{ minWidth: 700 }}
           size="small"
-          aria-label="simple table"
         >
           <TableHead>
             <TableRow>

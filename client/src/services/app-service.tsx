@@ -3,11 +3,15 @@ const SERVER_API_URL =
   process.env.REACT_APP_SERVER_URL || "http://localhost:4000/api";
 console.log("Using: " + SERVER_API_URL);
 
+export const PWBD_BOTH = "Both"
+export const PWBD_TRUE = "True"
+export const PWBD_FALSE = "False"
+
 export interface Filter {
   city: string[];
   state: string[];
   zip: string;
-  pwbd: boolean;
+  pwbd: boolean | undefined;
 }
 
 interface KeyValue {
@@ -15,6 +19,9 @@ interface KeyValue {
 }
 
 export const search = async (filter: Filter) => {
+  if (filter.pwbd === undefined) {
+    delete filter.pwbd
+  }
   try {
     const response = await axios.post(`${SERVER_API_URL}/facilities`, filter);
     return response.data;

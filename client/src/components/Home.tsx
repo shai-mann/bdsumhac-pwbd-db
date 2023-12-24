@@ -10,8 +10,8 @@ import FacilityMap from "./map/Map";
 import Facility from "../models/Facility";
 import Select from "./filter/Select";
 import TextInput from "./filter/TextInput";
-import SelectCheckBox from "./filter/SelectCheckBox";
 import Table from "./table/Table";
+import SingleSelect from "./filter/SingleSelect";
 
 function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -24,12 +24,14 @@ function HomePage() {
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
   const [zip, setZip] = useState("");
-  const [pwbd, setPwbd] = useState(false);
+  const [pwbd, setPwbd] = useState<boolean | undefined>(undefined);
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
   const [highlightedFacility, setHighlightedFacility] =
     useState<Facility | null>(null);
+
+  useEffect(() => console.log(states), [states]);
 
   useEffect(() => {
     async function load() {
@@ -68,11 +70,12 @@ function HomePage() {
     if (
       selectedCities.length === 0 &&
       selectedStates.length === 0 &&
-      zip === ""
+      zip === "" &&
+      pwbd !== true
     ) {
       setFacilities([]);
       setQuerying(false);
-      return; // no querying with just the pwbd, since it lags out the view
+      return; // no querying with pwbd != true, since it lags out the view
     }
 
     load();
@@ -103,11 +106,14 @@ function HomePage() {
                 value={zip}
                 onChange={setZip}
               />
-              <SelectCheckBox
-                id="pwbd"
-                title="Accepts PWBD?"
-                checked={pwbd}
-                onChange={setPwbd}
+              <SingleSelect
+                title="PWBD"
+                options={[
+                  { label: "True", value: true },
+                  { label: "False", value: false },
+                ]}
+                selectedOption={pwbd}
+                setSelectedOption={setPwbd}
               />
             </>
           )}

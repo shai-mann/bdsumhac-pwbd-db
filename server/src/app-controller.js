@@ -15,12 +15,18 @@ const AppController = (app) => {
   //   }
   const getFacilities = async (req, res) => {
     const filter = req.body;
-    const formattedFilter = {
+    let formattedFilter = {
       city: exists(filter.city) ? { $in: filter.city } : null,
       state: exists(filter.state) ? { $in: filter.state } : null,
       zip: stringExists(filter.zip) ? new RegExp(`^${filter.zip}`) : null,
-      pwbd: !!filter.pwbd,
     };
+
+    if (filter.pwbd !== undefined) {
+      formattedFilter = {
+        ...formattedFilter,
+        pwbd: filter.pwbd
+      }
+    }
 
     Object.keys(formattedFilter).forEach((key) => {
       if (formattedFilter[key] === null) {
