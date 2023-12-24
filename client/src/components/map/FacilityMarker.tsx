@@ -46,7 +46,6 @@ const FacilityMarker: FC<MarkerProps> = ({
           {f.name1} {f.name2}
         </text>
       )}
-      {/* <FacilityModal facility={f} open={open} closeCallback={handleClose} /> */}
     </Marker>
   );
 };
