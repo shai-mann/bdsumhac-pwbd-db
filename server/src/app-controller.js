@@ -56,7 +56,6 @@ const AppController = (app) => {
     if (!email || email === "") return res.sendStatus(401);
     var anyFailed = false
     for (let [id, pwbd] of Object.entries(facilities)) {
-      console.log([id, pwbd])
       try {
         const facility = await facilitiesDao.findFacilityById(id);
         console.log(facility)
