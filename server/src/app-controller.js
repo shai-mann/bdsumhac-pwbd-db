@@ -47,23 +47,36 @@ const AppController = (app) => {
     }
   };
 
-  // update the PWBD value of a given facility. Must have an email attached.
-  // PARAMS: id (in path), username (query), pwbd (query)
+  // update the PWBD value of a given list of facilities. Must have an email attached.
+  // PARAMS: facilites list (in body, as (id, pwbd) pairs), email (query)
   const updateFacility = async (req, res) => {
-    const id = req.params.id;
     const email = req.query.email;
-    const pwbd = req.query.pwbd;
+    const facilities = req.body;
 
     if (!email || email === "") return res.sendStatus(401);
-    try {
-      const facility = await facilitiesDao.findFacilityById(id);
-      if (!facility) res.sendStatus(500);
-    } catch (error) {
-      res.sendStatus(500);
+    var anyFailed = false
+    for (let [id, pwbd] of Object.entries(facilities)) {
+      console.log([id, pwbd])
+      try {
+        const facility = await facilitiesDao.findFacilityById(id);
+        console.log(facility)
+        if (!facility) {
+          anyFailed = true
+          continue
+        }
+      } catch (error) {
+        anyFailed = true
+        continue
+      }
+
+      await facilitiesDao.updateFacility(id, pwbd);
+      await historyDao.createEdit({ email: email, facility: id, pwbd: pwbd });
     }
 
-    await facilitiesDao.updateFacility(id, pwbd);
-    await historyDao.createEdit({ email: email, facility: id, pwbd: pwbd });
+    if (anyFailed) {
+      return res.sendStatus(500)
+    }
+
     return res.sendStatus(200);
   };
 
@@ -79,7 +92,7 @@ const AppController = (app) => {
 
   app.post("/api/facilities", getFacilities);
   app.get("/api/facilities/:id", getFacility);
-  app.post("/api/facilities/:id", updateFacility);
+  app.post("/api/facilities/edit", updateFacility);
   app.get("/api/cities", getCities);
   app.get("/api/states", getStates);
 };
