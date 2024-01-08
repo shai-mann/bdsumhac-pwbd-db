@@ -9,6 +9,10 @@ import {
 } from "react-simple-maps";
 import Facility from "../../models/Facility";
 import FacilityMarker from "./FacilityMarker";
+import { IconButton } from "@mui/material";
+import PlusIcon from "@mui/icons-material/Add";
+import MinusIcon from "@mui/icons-material/Remove";
+import { pink } from "@mui/material/colors";
 
 const GEO_URL = "/us-topojson.json";
 
@@ -23,7 +27,8 @@ const FacilityMap: FC<FacilityMapProps> = ({
   facilities,
   clickCallback,
 }) => {
-  const [scaleFactor, setScaleFactor] = useState(1);
+  const [zoom, setZoom] = useState(1);
+  const [center, setCenter] = useState<[number, number]>([-96, 38.5]);
   const [hoveredMarker, setHoveredMarker] = useState<Facility>();
   // keeping track of hovered marker allows rendering of that marker on top of all others.
 
@@ -31,23 +36,61 @@ const FacilityMap: FC<FacilityMapProps> = ({
     setHoveredMarker(hovered ? f : undefined);
   };
 
+  const onMapMove = (center: [number, number], zoom: number) => {
+    setCenter(center);
+    setZoom(zoom);
+  };
+
   return (
-    <ComposableMap projection="geoAlbers" style={{ height: 400 }}>
-      <ZoomableGroup onMove={({ zoom }) => setScaleFactor(zoom)} maxZoom={500}>
-        <Geographies geography={GEO_URL}>
-          {({ geographies }) =>
-            geographies.map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill="#DDD"
-                stroke="#FFF"
-                className="geography"
-              />
-            ))
-          }
-        </Geographies>
-        {querying ? (
+    <div style={{ position: "relative" }}>
+      <div style={{ position: "revert" }}>
+        <ComposableMap projection="geoAlbers" style={{ height: 400 }}>
+          <ZoomableGroup
+            center={center}
+            zoom={zoom}
+            maxZoom={500}
+            onMoveEnd={({ coordinates, zoom }) => onMapMove(coordinates, zoom)}
+          >
+            <Geographies geography={GEO_URL}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="#DDD"
+                    stroke="#FFF"
+                    className="geography"
+                  />
+                ))
+              }
+            </Geographies>
+            {!querying && (
+              <>
+                {facilities.map((f, i) => (
+                  <FacilityMarker
+                    facility={f}
+                    key={i}
+                    scaleFactor={zoom}
+                    hoveredCallback={hoveredCallback}
+                    clickCallback={clickCallback}
+                  />
+                ))}
+                {hoveredMarker && (
+                  <FacilityMarker
+                    facility={hoveredMarker}
+                    key={"hovered"}
+                    scaleFactor={zoom}
+                    hoveredCallback={hoveredCallback}
+                    clickCallback={clickCallback}
+                  />
+                )}
+              </>
+            )}
+          </ZoomableGroup>
+        </ComposableMap>
+      </div>
+      <div style={{ position: "absolute", top: 0, left: 0 }}>
+        {querying && (
           <ColorRing
             visible={querying}
             height="80"
@@ -57,30 +100,21 @@ const FacilityMap: FC<FacilityMapProps> = ({
             wrapperClass="blocks-wrapper"
             colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
           />
-        ) : (
-          <>
-            {facilities.map((f, i) => (
-              <FacilityMarker
-                facility={f}
-                key={i}
-                scaleFactor={scaleFactor}
-                hoveredCallback={hoveredCallback}
-                clickCallback={clickCallback}
-              />
-            ))}
-            {hoveredMarker && (
-              <FacilityMarker
-                facility={hoveredMarker}
-                key={"hovered"}
-                scaleFactor={scaleFactor}
-                hoveredCallback={hoveredCallback}
-                clickCallback={clickCallback}
-              />
-            )}
-          </>
         )}
-      </ZoomableGroup>
-    </ComposableMap>
+      </div>
+      <div style={{ position: "absolute", bottom: 0, right: 0 }}>
+        <IconButton
+          onClick={() => setZoom(zoom * 1.1)}
+        >
+          <PlusIcon sx={{ color: pink[400] }} fontSize="large" />
+        </IconButton>
+        <IconButton
+          onClick={() => setZoom(zoom / 1.1)}
+        >
+          <MinusIcon sx={{ color: pink[400] }} fontSize="large" />
+        </IconButton>
+      </div>
+    </div>
   );
 };
 
