@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "name": "bdsumhac-pwbd-db",
+  "version": "1.0.0",
+  "description": "A database containing the list of treatment centers for substance abuse and mental health. This database is pulled from the SAMHSA government database, and supplemented with information regarding how they treat/accept potential patients with bleeding disorders",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shai Mann-Robison",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.5.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.9.0",
+    "express-session": "^1.17.3",
+    "fs": "^0.0.1-security",
+    "mongoose": "^7.4.3",
+    "nodemon": "^3.0.1"
+  }
+}

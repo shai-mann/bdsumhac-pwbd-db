@@ -1,0 +1,18 @@
+.geography {
+  outline: none;
+}
+
+.geography:hover {
+    outline: none;
+}
+
+.geography:pressed {
+    outline: none;
+}
+
+.marker-text {
+  font-family: "system-ui";
+  fill: "#5D5A6D";
+  position: relative;
+  font-weight: bold;
+}
