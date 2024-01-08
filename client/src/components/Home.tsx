@@ -5,7 +5,7 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import * as appService from "../services/app-service";
 import { ScrollPanel } from "primereact/scrollpanel";
-
+import { useDebounce } from 'primereact/hooks';
 import FacilityMap from "./map/Map";
 import Facility from "../models/Facility";
 import Select from "./filter/Select";
@@ -17,7 +17,7 @@ export const PWBD_DROPDOWN_OPTIONS = [
   { label: "Yes", value: appService.PWBD_TRUE },
   { label: "No", value: appService.PWBD_FALSE },
   { label: "Unknown", value: appService.PWBD_UNKNOWN },
-]
+];
 
 function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -29,13 +29,12 @@ function HomePage() {
 
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
-  const [zip, setZip] = useState("");
+  const [zip, debouncedZip, setZip] = useDebounce("", 500);
   const [pwbd, setPwbd] = useState<boolean | undefined>(undefined);
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
-  const [highlightedFacility, setHighlightedFacility] =
-    useState<Facility | null>(null);
+  const [highlightedFacility, setHighlightedFacility] = useState<Facility | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -64,8 +63,8 @@ function HomePage() {
         await appService.search({
           city: selectedCities,
           state: selectedStates,
-          zip: zip,
-          pwbd: pwbd,
+          zip: debouncedZip,
+          pwbd,
         })
       );
       setQuerying(false);
@@ -74,7 +73,7 @@ function HomePage() {
     if (
       selectedCities.length === 0 &&
       selectedStates.length === 0 &&
-      zip === "" &&
+      debouncedZip === "" &&
       pwbd !== true
     ) {
       setFacilities([]);
@@ -83,7 +82,7 @@ function HomePage() {
     }
 
     load();
-  }, [selectedCities, selectedStates, zip, pwbd]);
+  }, [selectedCities, selectedStates, debouncedZip, pwbd]);
 
   return (
     <PrimeReactProvider>
