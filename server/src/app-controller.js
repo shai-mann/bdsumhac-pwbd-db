@@ -16,6 +16,7 @@ const AppController = (app) => {
   const getFacilities = async (req, res) => {
     const filter = req.body;
     let formattedFilter = {
+      name1: exists(filter.name) ? { $regex: filter.name } : null,
       city: exists(filter.city) ? { $in: filter.city } : null,
       state: exists(filter.state) ? { $in: filter.state } : null,
       zip: stringExists(filter.zip) ? new RegExp(`^${filter.zip}`) : null,
@@ -24,8 +25,8 @@ const AppController = (app) => {
     if (filter.pwbd !== undefined) {
       formattedFilter = {
         ...formattedFilter,
-        pwbd: filter.pwbd
-      }
+        pwbd: filter.pwbd,
+      };
     }
 
     Object.keys(formattedFilter).forEach((key) => {
@@ -60,17 +61,17 @@ const AppController = (app) => {
     const facilities = req.body;
 
     if (!email || email === "") return res.sendStatus(401);
-    var anyFailed = false
+    var anyFailed = false;
     for (let [id, pwbd] of Object.entries(facilities)) {
       try {
         const facility = await facilitiesDao.findFacilityById(id);
         if (!facility) {
-          anyFailed = true
-          continue
+          anyFailed = true;
+          continue;
         }
       } catch (error) {
-        anyFailed = true
-        continue
+        anyFailed = true;
+        continue;
       }
 
       await facilitiesDao.updateFacility(id, pwbd);
@@ -78,7 +79,7 @@ const AppController = (app) => {
     }
 
     if (anyFailed) {
-      return res.sendStatus(500)
+      return res.sendStatus(500);
     }
 
     return res.sendStatus(200);

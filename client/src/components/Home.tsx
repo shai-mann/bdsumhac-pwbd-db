@@ -5,7 +5,7 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import * as appService from "../services/app-service";
 import { ScrollPanel } from "primereact/scrollpanel";
-import { useDebounce } from 'primereact/hooks';
+import { useDebounce } from "primereact/hooks";
 import FacilityMap from "./map/Map";
 import Facility from "../models/Facility";
 import Select from "./filter/Select";
@@ -27,14 +27,20 @@ function HomePage() {
   const [cities, setCities] = useState<string[]>([]);
   const [states, setStates] = useState<string[]>([]);
 
+  // filters
+  const [facilityName, debouncedFacilityName, setFacilityName] = useDebounce(
+    "",
+    1000
+  );
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
-  const [zip, debouncedZip, setZip] = useDebounce("", 500);
+  const [zip, debouncedZip, setZip] = useDebounce("", 1000);
   const [pwbd, setPwbd] = useState<boolean | undefined>(undefined);
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
-  const [highlightedFacility, setHighlightedFacility] = useState<Facility | null>(null);
+  const [highlightedFacility, setHighlightedFacility] =
+    useState<Facility | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -61,6 +67,7 @@ function HomePage() {
       setQuerying(true);
       setFacilities(
         await appService.search({
+          name: debouncedFacilityName,
           city: selectedCities,
           state: selectedStates,
           zip: debouncedZip,
@@ -71,6 +78,7 @@ function HomePage() {
     }
 
     if (
+      debouncedFacilityName.length === 0 &&
       selectedCities.length === 0 &&
       selectedStates.length === 0 &&
       debouncedZip === "" &&
@@ -82,7 +90,13 @@ function HomePage() {
     }
 
     load();
-  }, [selectedCities, selectedStates, debouncedZip, pwbd]);
+  }, [
+    debouncedFacilityName,
+    selectedCities,
+    selectedStates,
+    debouncedZip,
+    pwbd,
+  ]);
 
   return (
     <PrimeReactProvider>
@@ -92,6 +106,11 @@ function HomePage() {
             <p style={{ color: "#6c757d" }}>Loading Filters...</p>
           ) : (
             <>
+              <TextInput
+                title="Facility Name"
+                value={facilityName}
+                onChange={setFacilityName}
+              />
               <Select
                 title="Cities"
                 options={cities}

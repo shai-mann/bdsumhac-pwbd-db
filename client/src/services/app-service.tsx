@@ -9,6 +9,7 @@ export const PWBD_FALSE = "False"
 export const PWBD_UNKNOWN = "Unknown"
 
 export interface Filter {
+  name: string;
   city: string[];
   state: string[];
   zip: string;
