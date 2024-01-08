@@ -64,7 +64,6 @@ const AppController = (app) => {
     for (let [id, pwbd] of Object.entries(facilities)) {
       try {
         const facility = await facilitiesDao.findFacilityById(id);
-        console.log(facility)
         if (!facility) {
           anyFailed = true
           continue
@@ -75,7 +74,7 @@ const AppController = (app) => {
       }
 
       await facilitiesDao.updateFacility(id, pwbd);
-      await historyDao.createEdit({ email: email, facility: id, pwbd: pwbd });
+      await historyDao.createEdit({ email, facility: id, pwbd });
     }
 
     if (anyFailed) {

@@ -6,6 +6,7 @@ console.log("Using: " + SERVER_API_URL);
 export const PWBD_BOTH = "Both"
 export const PWBD_TRUE = "True"
 export const PWBD_FALSE = "False"
+export const PWBD_UNKNOWN = "Unknown"
 
 export interface Filter {
   city: string[];
@@ -15,7 +16,7 @@ export interface Filter {
 }
 
 interface KeyValue {
-  [propName: string]: Boolean
+  [propName: string]: String
 }
 
 export const search = async (filter: Filter) => {
@@ -48,7 +49,7 @@ export const getStates = async () => {
   }
 };
 
-export const updateFacilities = async (email: string, edits: [String, Boolean][]) => {
+export const updateFacilities = async (email: string, edits: [String, String][]) => {
   try {
     var body: KeyValue = {}
     for (let [id, pwbd] of edits) {

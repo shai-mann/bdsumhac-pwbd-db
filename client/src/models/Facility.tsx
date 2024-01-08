@@ -16,7 +16,7 @@ interface Facility {
   website: string;
   latitude: number;
   longitude: number;
-  pwbd: boolean;
+  pwbd: string;
 }
 
 export default Facility;

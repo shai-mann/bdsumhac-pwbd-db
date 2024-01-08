@@ -13,6 +13,12 @@ import TextInput from "./filter/TextInput";
 import Table from "./table/Table";
 import SingleSelect from "./filter/SingleSelect";
 
+export const PWBD_DROPDOWN_OPTIONS = [
+  { label: "Yes", value: appService.PWBD_TRUE },
+  { label: "No", value: appService.PWBD_FALSE },
+  { label: "Unknown", value: appService.PWBD_UNKNOWN },
+]
+
 function HomePage() {
   const [loading, setLoading] = useState(true);
   // querying is slightly different from loading - loading is for cities and states, querying is for loading the facilities
@@ -30,8 +36,6 @@ function HomePage() {
 
   const [highlightedFacility, setHighlightedFacility] =
     useState<Facility | null>(null);
-
-  useEffect(() => console.log(states), [states]);
 
   useEffect(() => {
     async function load() {
@@ -107,11 +111,8 @@ function HomePage() {
                 onChange={setZip}
               />
               <SingleSelect
-                title="PWBD"
-                options={[
-                  { label: "True", value: true },
-                  { label: "False", value: false },
-                ]}
+                title="Accepts person with blood disorder?"
+                options={PWBD_DROPDOWN_OPTIONS}
                 selectedOption={pwbd}
                 setSelectedOption={setPwbd}
               />

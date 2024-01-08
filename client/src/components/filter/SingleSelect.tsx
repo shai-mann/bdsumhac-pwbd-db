@@ -24,8 +24,9 @@ const SingleSelect: FC<SingleSelectProps> = ({
         options={options}
         optionLabel="label"
         showClear
+        className="w-80"
       />
-      <label htmlFor={selectId}>{title}</label>
+      <label htmlFor={selectId} style={{ whiteSpace: "nowrap" }}>{title}</label>
     </span>
   );
 };

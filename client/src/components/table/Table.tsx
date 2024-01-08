@@ -4,17 +4,13 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import {
-  Button,
-  Checkbox,
-  Link,
-  Table as MaterialTable,
-  TextField,
-} from "@mui/material";
+import { Button, Link, Table as MaterialTable, TextField } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Facility from "../../models/Facility";
-import { pink } from "@mui/material/colors";
 import { updateFacilities } from "../../services/app-service";
+import { Dropdown } from "primereact/dropdown";
+import { PWBD_DROPDOWN_OPTIONS } from "../Home";
+import { PopUp } from "./PopUp";
 
 interface TableProps {
   facilities: Facility[];
@@ -22,34 +18,53 @@ interface TableProps {
 }
 
 const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
-  const [editedFacilities, setEditedFacilities] = useState<[String, Boolean][]>(
+  const [editedFacilities, setEditedFacilities] = useState<[String, String][]>(
     []
-  );
+  ); // [id, newPWBDValue]
   const [email, setEmail] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-  const onChange = (checked: boolean, f: Facility) => {
+  const onChange = (update: string, f: Facility) => {
     const existingF = facilities.find((f1) => f1._id === f._id);
-    if (existingF?.pwbd === checked) {
+    if (existingF?.pwbd === update) {
       setEditedFacilities(editedFacilities.filter((f1) => f1[0] !== f._id)); // remove edit
     } else {
-      setEditedFacilities(editedFacilities.concat([[f._id, checked]])); // add edit
+      setEditedFacilities(editedFacilities.concat([[f._id, update]])); // add edit
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowModal(true);
+  };
+
+  const closeModal = (submit: boolean) => {
+    if (submit) {
+      sendEdits();
+    }
+
+    setShowModal(false);
+  };
+
+  const sendEdits = async () => {
     await updateFacilities(email, editedFacilities);
     // update facilities to reflect edits
     for (let [id, pwbd] of editedFacilities) {
       const f = facilities.find((f) => f._id === id);
       if (f) {
-        f.pwbd = pwbd as boolean;
+        f.pwbd = pwbd as string;
       }
     }
     setEditedFacilities([]);
   };
 
   const createFacility = (f: Facility, highlight = false) => {
+    let pwbd = f.pwbd;
+    const edit = editedFacilities.find((f1) => f1[0] === f._id);
+    if (edit) {
+      pwbd = edit[1] as string; // if edits were made, display edit instead of original
+    }
+
     return (
       <TableRow
         key={f._id}
@@ -59,15 +74,11 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
         }}
       >
         <TableCell>
-          <Checkbox
-            checked={!!f.pwbd}
-            sx={{
-              color: pink[800],
-              "&.Mui-checked": {
-                color: pink[600],
-              },
-            }}
-            onChange={(e) => onChange(e.target.checked, f)}
+          <Dropdown
+            value={PWBD_DROPDOWN_OPTIONS.find((o) => o.value === pwbd)?.value}
+            onChange={(e) => onChange(e.target.value, f)}
+            options={PWBD_DROPDOWN_OPTIONS}
+            optionLabel="label"
           />
         </TableCell>
         <TableCell>{f.name1}</TableCell>
@@ -93,6 +104,11 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
         <div
           style={{ display: "flex", justifyContent: "center", paddingTop: 10 }}
         >
+          <PopUp
+            edits={editedFacilities.length}
+            show={showModal}
+            closeModal={closeModal}
+          />
           <form
             onSubmit={handleSubmit}
             style={{ display: "flex", alignItems: "baseline", gap: 20 }}
@@ -108,20 +124,23 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
               size="small"
               required
             />
-            <Button variant="contained" color="error" type="submit">
-              Update {editedFacilities.length} Facilities
+            <Button
+              variant="contained"
+              color="error"
+              type="submit"
+              disabled={email.length === 0}
+            >
+              Save {editedFacilities.length} Change
+              {editedFacilities.length > 1 && "s"}
             </Button>
           </form>
         </div>
       )}
       <TableContainer component={Paper}>
-        <MaterialTable
-          sx={{ minWidth: 700 }}
-          size="small"
-        >
+        <MaterialTable sx={{ minWidth: 700 }} size="small">
           <TableHead>
             <TableRow>
-              <TableCell>PWBD?</TableCell>
+              <TableCell>Accepts blood disorders</TableCell>
               <TableCell>Facility Name</TableCell>
               <TableCell>Address</TableCell>
               <TableCell>Phone</TableCell>
