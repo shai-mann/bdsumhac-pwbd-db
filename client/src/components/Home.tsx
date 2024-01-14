@@ -19,6 +19,11 @@ export const PWBD_DROPDOWN_OPTIONS = [
   { label: "Unknown", value: appService.PWBD_UNKNOWN },
 ];
 
+export const FACILITY_TYPE_OPTIONS = [
+  { label: "SU", value: "SU" },
+  { label: "MH", value: "MH" },
+];
+
 function HomePage() {
   const [loading, setLoading] = useState(true);
   // querying is slightly different from loading - loading is for cities and states, querying is for loading the facilities
@@ -36,6 +41,9 @@ function HomePage() {
   const [selectedStates, setSelectedStates] = useState([]);
   const [zip, debouncedZip, setZip] = useDebounce("", 1000);
   const [pwbd, setPwbd] = useState<boolean | undefined>(undefined);
+  const [facilityType, setFacilityType] = useState<boolean | undefined>(
+    undefined
+  );
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
@@ -71,6 +79,7 @@ function HomePage() {
           city: selectedCities,
           state: selectedStates,
           zip: debouncedZip,
+          facility_type: facilityType,
           pwbd,
         })
       );
@@ -82,6 +91,7 @@ function HomePage() {
       selectedCities.length === 0 &&
       selectedStates.length === 0 &&
       debouncedZip === "" &&
+      facilityType === undefined &&
       pwbd !== true
     ) {
       setFacilities([]);
@@ -95,6 +105,7 @@ function HomePage() {
     selectedCities,
     selectedStates,
     debouncedZip,
+    facilityType,
     pwbd,
   ]);
 
@@ -106,34 +117,44 @@ function HomePage() {
             <p style={{ color: "#6c757d" }}>Loading Filters...</p>
           ) : (
             <>
-              <TextInput
-                title="Facility Name"
-                value={facilityName}
-                onChange={setFacilityName}
-              />
-              <Select
-                title="Cities"
-                options={cities}
-                selectedOptions={selectedCities}
-                setSelectedOptions={setSelectedCities}
-              />
-              <Select
-                title="States"
-                options={states}
-                selectedOptions={selectedStates}
-                setSelectedOptions={setSelectedStates}
-              />
-              <TextInput
-                title="Zip (Starts with)"
-                value={zip}
-                onChange={setZip}
-              />
-              <SingleSelect
-                title="Accepts person with blood disorder?"
-                options={PWBD_DROPDOWN_OPTIONS}
-                selectedOption={pwbd}
-                setSelectedOption={setPwbd}
-              />
+              <div className="filter-row">
+                <TextInput
+                  title="Facility Name"
+                  value={facilityName}
+                  onChange={setFacilityName}
+                />
+                <Select
+                  title="Cities"
+                  options={cities}
+                  selectedOptions={selectedCities}
+                  setSelectedOptions={setSelectedCities}
+                />
+                <Select
+                  title="States"
+                  options={states}
+                  selectedOptions={selectedStates}
+                  setSelectedOptions={setSelectedStates}
+                />
+                <TextInput
+                  title="Zip (Starts with)"
+                  value={zip}
+                  onChange={setZip}
+                />
+              </div>
+              <div className="filter-row">
+                <SingleSelect
+                  title="Facility type"
+                  options={FACILITY_TYPE_OPTIONS}
+                  selectedOption={facilityType}
+                  setSelectedOption={setFacilityType}
+                />
+                <SingleSelect
+                  title="Accepts person with blood disorder?"
+                  options={PWBD_DROPDOWN_OPTIONS}
+                  selectedOption={pwbd}
+                  setSelectedOption={setPwbd}
+                />
+              </div>
             </>
           )}
         </div>

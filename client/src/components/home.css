@@ -12,9 +12,15 @@
 
 .filter-container {
   display: flex;
+  flex-direction: column;
   gap: 25px;
   padding: 25px;
   align-items: center;
+}
+
+.filter-row {
+  display: flex;
+  gap: 25px;
 }
 
 .results-container {

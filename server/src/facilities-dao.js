@@ -41,6 +41,7 @@ export const createFacilities = async () => {
       website: x.website,
       latitude: x.latitude,
       longitude: x.longitude,
+      facility_type: x.type_facility,
       pwbd: "Unknown",
     };
   });

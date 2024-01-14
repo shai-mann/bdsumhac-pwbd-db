@@ -22,6 +22,13 @@ const AppController = (app) => {
       zip: stringExists(filter.zip) ? new RegExp(`^${filter.zip}`) : null,
     };
 
+    if (filter.facility_type !== undefined) {
+      formattedFilter = {
+        ...formattedFilter,
+        facility_type: filter.facility_type,
+      };
+    }
+
     if (filter.pwbd !== undefined) {
       formattedFilter = {
         ...formattedFilter,

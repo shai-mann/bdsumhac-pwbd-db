@@ -14,6 +14,7 @@ const facilitiesSchema = new mongoose.Schema(
     website: String,
     latitude: Number,
     longitude: Number,
+    facility_type: String,
     pwbd: String,
   },
   { collection: "facilities" }
