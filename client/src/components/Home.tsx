@@ -20,8 +20,8 @@ export const PWBD_DROPDOWN_OPTIONS = [
 ];
 
 export const FACILITY_TYPE_OPTIONS = [
-  { label: "SU", value: "SU" },
-  { label: "MH", value: "MH" },
+  { label: "Substance Use", value: "SU" },
+  { label: "Mental Health", value: "MH" },
 ];
 
 function HomePage() {
