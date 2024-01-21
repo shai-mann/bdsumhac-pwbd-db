@@ -36,4 +36,4 @@ AppController(app);
 app.listen(process.env.PORT || 4000);
 
 // init data if missing existing data
-createFacilities();
+// createFacilities();
