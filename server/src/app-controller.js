@@ -11,6 +11,8 @@ const AppController = (app) => {
   //     city: String[] (optional),
   //     state: String[] (optional),
   //     zip: String (optional),
+  //     facility_type: SU/MH (optional),
+  //     demographic: String[] optional (pediatric, teen, adult, senior, women, men),
   //     pwbd: Boolean (optional)
   //   }
   const getFacilities = async (req, res) => {
@@ -22,14 +24,26 @@ const AppController = (app) => {
       zip: stringExists(filter.zip) ? new RegExp(`^${filter.zip}`) : null,
     };
 
-    if (filter.facility_type !== undefined) {
+    if (filter.facility_type) {
       formattedFilter = {
         ...formattedFilter,
         facility_type: filter.facility_type,
       };
     }
 
-    if (filter.pwbd !== undefined) {
+    if (filter.demographics) {
+      const demographics = {};
+      filter.demographics.forEach((dem) => {
+        demographics[dem] = true;
+      });
+      formattedFilter = {
+        ...formattedFilter,
+        ...demographics,
+      };
+      console.log(formattedFilter);
+    }
+
+    if (filter.pwbd) {
       formattedFilter = {
         ...formattedFilter,
         pwbd: filter.pwbd,
