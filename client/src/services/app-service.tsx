@@ -14,6 +14,7 @@ export interface Filter {
   state: string[];
   zip: string;
   facility_type: boolean | undefined;
+  demographics: string[];
   pwbd: boolean | undefined;
 }
 
@@ -50,6 +51,15 @@ export const getCities = async () => {
 export const getStates = async () => {
   try {
     const response = await axios.get(`${SERVER_API_URL}/states`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getDemographicFilters = async () => {
+  try {
+    const response = await axios.get(`${SERVER_API_URL}/demographics`);
     return response.data;
   } catch (error) {
     console.log(error);
