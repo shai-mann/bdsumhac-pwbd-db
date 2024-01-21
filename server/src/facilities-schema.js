@@ -15,6 +15,12 @@ const facilitiesSchema = new mongoose.Schema(
     latitude: Number,
     longitude: Number,
     facility_type: String,
+    pediatric: Boolean,
+    teen: Boolean,
+    adult: Boolean,
+    senior: Boolean,
+    women: Boolean,
+    men: Boolean,
     pwbd: String,
   },
   { collection: "facilities" }

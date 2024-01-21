@@ -42,6 +42,12 @@ export const createFacilities = async () => {
       latitude: x.latitude,
       longitude: x.longitude,
       facility_type: x.type_facility,
+      pediatric: x.chld === "1",
+      teen: x.yad === "1",
+      adult: x.adlt === "1",
+      senior: x.snr === "1",
+      women: x.fem === "1",
+      men: x.male === "1",
       pwbd: "Unknown",
     };
   });
