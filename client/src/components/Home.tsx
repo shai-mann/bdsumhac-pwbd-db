@@ -31,6 +31,7 @@ function HomePage() {
 
   const [cities, setCities] = useState<string[]>([]);
   const [states, setStates] = useState<string[]>([]);
+  const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
 
   // filters
   const [facilityName, debouncedFacilityName, setFacilityName] = useDebounce(
@@ -44,6 +45,7 @@ function HomePage() {
   const [facilityType, setFacilityType] = useState<boolean | undefined>(
     undefined
   );
+  const [selectedDemographics, setSelectedDemographics] = useState([]);
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
@@ -54,6 +56,7 @@ function HomePage() {
     async function load() {
       const cities = await appService.getCities();
       const states = await appService.getStates();
+      const demographics = await appService.getDemographicFilters();
       setCities(
         cities.map((c: any) => {
           return { label: c, value: c };
@@ -64,6 +67,7 @@ function HomePage() {
           return { label: c, value: c };
         })
       );
+      setDemographicFilters(demographics);
       setLoading(false);
     }
 
@@ -80,6 +84,7 @@ function HomePage() {
           state: selectedStates,
           zip: debouncedZip,
           facility_type: facilityType,
+          demographics: selectedDemographics,
           pwbd,
         })
       );
@@ -92,6 +97,7 @@ function HomePage() {
       selectedStates.length === 0 &&
       debouncedZip === "" &&
       facilityType === undefined &&
+      selectedDemographics.length === 0 &&
       pwbd !== true
     ) {
       setFacilities([]);
@@ -106,6 +112,7 @@ function HomePage() {
     selectedStates,
     debouncedZip,
     facilityType,
+    selectedDemographics,
     pwbd,
   ]);
 
@@ -147,6 +154,12 @@ function HomePage() {
                   options={FACILITY_TYPE_OPTIONS}
                   selectedOption={facilityType}
                   setSelectedOption={setFacilityType}
+                />
+                <Select
+                  title="Demographics"
+                  options={demographicFilters}
+                  selectedOptions={selectedDemographics}
+                  setSelectedOptions={setSelectedDemographics}
                 />
                 <SingleSelect
                   title="Accepts person with blood disorder?"

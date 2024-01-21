@@ -18,6 +18,7 @@ const Select: FC<SelectProps> = ({
   return (
     <span className="p-float-label">
       <MultiSelect
+        className="w-40"
         id={selectId}
         value={selectedOptions}
         onChange={(e) => setSelectedOptions(e.value)}

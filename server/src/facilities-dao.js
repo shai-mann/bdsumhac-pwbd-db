@@ -16,6 +16,15 @@ export const findCities = () => facilitiesModel.distinct("city");
 
 export const findStates = () => facilitiesModel.distinct("state");
 
+export const validDemographicsFilters = [
+  { label: "Pediatric", value: "pediatric" },
+  { label: "Young Adult", value: "teen" },
+  { label: "Adult", value: "adult" },
+  { label: "Senior", value: "senior" },
+  { label: "Women", value: "women" },
+  { label: "Men", value: "men" },
+];
+
 export const createFacilities = async () => {
   const existing = await facilitiesModel.count();
   if (existing !== 0) {
