@@ -98,7 +98,7 @@ function HomePage() {
       debouncedZip === "" &&
       facilityType === undefined &&
       selectedDemographics.length === 0 &&
-      pwbd !== true
+      pwbd === undefined
     ) {
       setFacilities([]);
       setQuerying(false);
