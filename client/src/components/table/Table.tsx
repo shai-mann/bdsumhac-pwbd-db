@@ -12,6 +12,7 @@ import { Dropdown } from "primereact/dropdown";
 import { PWBD_DROPDOWN_OPTIONS } from "../Home";
 import { PopUp } from "./PopUp";
 import { facilityTypeToFriendlyName } from "../../util/utils";
+import { LightTooltip } from "./LightToolTip";
 
 interface TableProps {
   facilities: Facility[];
@@ -26,8 +27,10 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    setEditedFacilities((edits) => edits.filter(([id, _]) => facilities.find(f => f._id === id)));
-  }, [facilities])
+    setEditedFacilities((edits) =>
+      edits.filter(([id, _]) => facilities.find((f) => f._id === id))
+    );
+  }, [facilities]);
 
   const onChange = (update: string, f: Facility) => {
     const existingF = facilities.find((f1) => f1._id === f._id);
@@ -86,7 +89,11 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
             optionLabel="label"
           />
         </TableCell>
-        <TableCell>{f.name1}</TableCell>
+        <TableCell>
+          <LightTooltip title={f._id}>
+            <p>{f.name1}</p>
+          </LightTooltip>
+        </TableCell>
         <TableCell>{facilityTypeToFriendlyName(f.treatment_type)}</TableCell>
         <TableCell>
           {f.street1}
