@@ -14,13 +14,17 @@ const facilitiesSchema = new mongoose.Schema(
     website: String,
     latitude: Number,
     longitude: Number,
-    facility_type: String,
+    treatment_type: String,
     pediatric: Boolean,
     teen: Boolean,
     adult: Boolean,
     senior: Boolean,
     women: Boolean,
     men: Boolean,
+    inpatient: Boolean, // HI
+    outpatient: Boolean, // OP
+    partial_hospitalization: Boolean, // PHDT
+    residential: Boolean, // RES
     pwbd: String,
   },
   { collection: "facilities" }

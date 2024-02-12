@@ -124,12 +124,17 @@ const AppController = (app) => {
     return res.json(facilitiesDao.validDemographicsFilters);
   };
 
+  const getFacilityTypes = async (req, res) => {
+    return res.json(facilitiesDao.validFacilityTypeFilters);
+  };
+
   app.post("/api/facilities", getFacilities);
   app.get("/api/facilities/:id", getFacility);
   app.post("/api/facilities/edit", updateFacility);
   app.get("/api/cities", getCities);
   app.get("/api/states", getStates);
   app.get("/api/demographics", getDemographics);
+  app.get("/api/facility_types", getFacilityTypes);
 };
 
 export default AppController;

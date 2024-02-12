@@ -25,6 +25,13 @@ export const validDemographicsFilters = [
   { label: "Men", value: "men" },
 ];
 
+export const validFacilityTypeFilters = [
+  { label: "Inpatient", value: "inpatient" },
+  { label: "Outpatient", value: "outpatient" },
+  { label: "Partial Hospitalization", value: "partial_hospitalization" },
+  { label: "Residential", value: "residential" },
+];
+
 export const createFacilities = async () => {
   const existing = await facilitiesModel.count();
   if (existing !== 0) {
@@ -50,13 +57,17 @@ export const createFacilities = async () => {
       website: x.website,
       latitude: x.latitude,
       longitude: x.longitude,
-      facility_type: x.type_facility,
+      treatment_type: x.type_facility,
       pediatric: x.chld === "1",
       teen: x.yad === "1",
       adult: x.adlt === "1",
       senior: x.snr === "1",
       women: x.fem === "1",
       men: x.male === "1",
+      inpatient: x.hi === "1",
+      outpatient: x.op === "1",
+      partial_hospitalization: x.phdt === "1",
+      residential: x.res === "1",
       pwbd: "Unknown",
     };
   });
