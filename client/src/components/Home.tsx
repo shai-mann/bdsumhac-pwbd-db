@@ -19,7 +19,7 @@ export const PWBD_DROPDOWN_OPTIONS = [
   { label: "Unknown", value: appService.PWBD_UNKNOWN },
 ];
 
-export const FACILITY_TYPE_OPTIONS = [
+export const TREATMENT_TYPE_OPTIONS = [
   { label: "Substance Use", value: "SU" },
   { label: "Mental Health", value: "MH" },
 ];
@@ -32,6 +32,7 @@ function HomePage() {
   const [cities, setCities] = useState<string[]>([]);
   const [states, setStates] = useState<string[]>([]);
   const [demographicFilters, setDemographicFilters] = useState<string[]>([]);
+  const [facilityTypeFilters, setFacilityTypeFilters] = useState<string[]>([]);
 
   // filters
   const [facilityName, debouncedFacilityName, setFacilityName] = useDebounce(
@@ -42,10 +43,11 @@ function HomePage() {
   const [selectedStates, setSelectedStates] = useState([]);
   const [zip, debouncedZip, setZip] = useDebounce("", 1000);
   const [pwbd, setPwbd] = useState<boolean | undefined>(undefined);
-  const [facilityType, setFacilityType] = useState<boolean | undefined>(
+  const [treatmentType, setTreatmentType] = useState<boolean | undefined>(
     undefined
   );
   const [selectedDemographics, setSelectedDemographics] = useState([]);
+  const [selectedFacilityTypes, setSelectedFacilityTypes] = useState([]);
 
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
@@ -57,6 +59,7 @@ function HomePage() {
       const cities = await appService.getCities();
       const states = await appService.getStates();
       const demographics = await appService.getDemographicFilters();
+      const facilityTypes = await appService.getFacilityTypeFilters();
       setCities(
         cities.map((c: any) => {
           return { label: c, value: c };
@@ -68,6 +71,7 @@ function HomePage() {
         })
       );
       setDemographicFilters(demographics);
+      setFacilityTypeFilters(facilityTypes);
       setLoading(false);
     }
 
@@ -83,8 +87,9 @@ function HomePage() {
           city: selectedCities,
           state: selectedStates,
           zip: debouncedZip,
-          facility_type: facilityType,
+          treatment_type: treatmentType,
           demographics: selectedDemographics,
+          facility_types: selectedFacilityTypes,
           pwbd,
         })
       );
@@ -96,8 +101,9 @@ function HomePage() {
       selectedCities.length === 0 &&
       selectedStates.length === 0 &&
       debouncedZip === "" &&
-      facilityType === undefined &&
+      treatmentType === undefined &&
       selectedDemographics.length === 0 &&
+      selectedFacilityTypes.length === 0 &&
       pwbd === undefined
     ) {
       setFacilities([]);
@@ -111,8 +117,9 @@ function HomePage() {
     selectedCities,
     selectedStates,
     debouncedZip,
-    facilityType,
+    treatmentType,
     selectedDemographics,
+    selectedFacilityTypes,
     pwbd,
   ]);
 
@@ -147,13 +154,19 @@ function HomePage() {
                   value={zip}
                   onChange={setZip}
                 />
+                <Select
+                  title="Facility Type"
+                  options={facilityTypeFilters}
+                  selectedOptions={selectedFacilityTypes}
+                  setSelectedOptions={setSelectedFacilityTypes}
+                />
               </div>
               <div className="filter-row">
                 <SingleSelect
-                  title="Facility type"
-                  options={FACILITY_TYPE_OPTIONS}
-                  selectedOption={facilityType}
-                  setSelectedOption={setFacilityType}
+                  title="Treatment type"
+                  options={TREATMENT_TYPE_OPTIONS}
+                  selectedOption={treatmentType}
+                  setSelectedOption={setTreatmentType}
                 />
                 <Select
                   title="Demographics"

@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -11,6 +11,7 @@ import { updateFacilities } from "../../services/app-service";
 import { Dropdown } from "primereact/dropdown";
 import { PWBD_DROPDOWN_OPTIONS } from "../Home";
 import { PopUp } from "./PopUp";
+import { facilityTypeToFriendlyName } from "../../util/utils";
 
 interface TableProps {
   facilities: Facility[];
@@ -23,6 +24,10 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
   ); // [id, newPWBDValue]
   const [email, setEmail] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setEditedFacilities((edits) => edits.filter(([id, _]) => facilities.find(f => f._id === id)));
+  }, [facilities])
 
   const onChange = (update: string, f: Facility) => {
     const existingF = facilities.find((f1) => f1._id === f._id);
@@ -82,6 +87,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
           />
         </TableCell>
         <TableCell>{f.name1}</TableCell>
+        <TableCell>{facilityTypeToFriendlyName(f.treatment_type)}</TableCell>
         <TableCell>
           {f.street1}
           {f.street2 ? `, ${f.street2}` : ""}
@@ -142,6 +148,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
             <TableRow>
               <TableCell>Accepts blood disorders</TableCell>
               <TableCell>Facility Name</TableCell>
+              <TableCell>Facility Type</TableCell>
               <TableCell>Address</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Website</TableCell>

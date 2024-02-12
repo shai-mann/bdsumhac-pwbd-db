@@ -11,8 +11,9 @@ const AppController = (app) => {
   //     city: String[] (optional),
   //     state: String[] (optional),
   //     zip: String (optional),
-  //     facility_type: SU/MH (optional),
+  //     treatment_type: SU/MH (optional),
   //     demographic: String[] optional (pediatric, teen, adult, senior, women, men),
+  //     facility_types: String[] optional (inpatient, outpatient, partial_hospitalization, residential),
   //     pwbd: Boolean (optional)
   //   }
   const getFacilities = async (req, res) => {
@@ -24,10 +25,10 @@ const AppController = (app) => {
       zip: stringExists(filter.zip) ? new RegExp(`^${filter.zip}`) : null,
     };
 
-    if (filter.facility_type) {
+    if (filter.treatment_type) {
       formattedFilter = {
         ...formattedFilter,
-        facility_type: filter.facility_type,
+        treatment_type: filter.treatment_type,
       };
     }
 
@@ -39,6 +40,17 @@ const AppController = (app) => {
       formattedFilter = {
         ...formattedFilter,
         ...demographics,
+      };
+    }
+
+    if (filter.facility_types) {
+      const facility_types = {};
+      filter.facility_types.forEach((type) => {
+        facility_types[type] = true;
+      });
+      formattedFilter = {
+        ...formattedFilter,
+        ...facility_types,
       };
       console.log(formattedFilter);
     }
@@ -124,12 +136,17 @@ const AppController = (app) => {
     return res.json(facilitiesDao.validDemographicsFilters);
   };
 
+  const getFacilityTypes = async (req, res) => {
+    return res.json(facilitiesDao.validFacilityTypeFilters);
+  };
+
   app.post("/api/facilities", getFacilities);
   app.get("/api/facilities/:id", getFacility);
   app.post("/api/facilities/edit", updateFacility);
   app.get("/api/cities", getCities);
   app.get("/api/states", getStates);
   app.get("/api/demographics", getDemographics);
+  app.get("/api/facility_types", getFacilityTypes);
 };
 
 export default AppController;

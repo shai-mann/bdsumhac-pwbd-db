@@ -13,8 +13,9 @@ export interface Filter {
   city: string[];
   state: string[];
   zip: string;
-  facility_type: boolean | undefined;
+  treatment_type: boolean | undefined;
   demographics: string[];
+  facility_types: string[];
   pwbd: boolean | undefined;
 }
 
@@ -27,8 +28,8 @@ export const search = async (filter: Filter) => {
     delete filter.pwbd;
   }
 
-  if (filter.facility_type === undefined) {
-    delete filter.facility_type;
+  if (filter.treatment_type === undefined) {
+    delete filter.treatment_type;
   }
 
   try {
@@ -60,6 +61,15 @@ export const getStates = async () => {
 export const getDemographicFilters = async () => {
   try {
     const response = await axios.get(`${SERVER_API_URL}/demographics`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getFacilityTypeFilters = async () => {
+  try {
+    const response = await axios.get(`${SERVER_API_URL}/facility_types`);
     return response.data;
   } catch (error) {
     console.log(error);
