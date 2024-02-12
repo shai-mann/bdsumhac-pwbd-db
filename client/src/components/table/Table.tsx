@@ -11,6 +11,7 @@ import { updateFacilities } from "../../services/app-service";
 import { Dropdown } from "primereact/dropdown";
 import { PWBD_DROPDOWN_OPTIONS } from "../Home";
 import { PopUp } from "./PopUp";
+import { facilityTypeToFriendlyName } from "../../util/utils";
 
 interface TableProps {
   facilities: Facility[];
@@ -82,6 +83,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
           />
         </TableCell>
         <TableCell>{f.name1}</TableCell>
+        <TableCell>{facilityTypeToFriendlyName(f.facility_type)}</TableCell>
         <TableCell>
           {f.street1}
           {f.street2 ? `, ${f.street2}` : ""}
@@ -142,6 +144,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
             <TableRow>
               <TableCell>Accepts blood disorders</TableCell>
               <TableCell>Facility Name</TableCell>
+              <TableCell>Facility Type</TableCell>
               <TableCell>Address</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Website</TableCell>
