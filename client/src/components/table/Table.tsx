@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -24,6 +24,10 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
   ); // [id, newPWBDValue]
   const [email, setEmail] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setEditedFacilities((edits) => edits.filter(([id, _]) => facilities.find(f => f._id === id)));
+  }, [facilities])
 
   const onChange = (update: string, f: Facility) => {
     const existingF = facilities.find((f1) => f1._id === f._id);
