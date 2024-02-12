@@ -16,7 +16,7 @@ interface Facility {
   website: string;
   latitude: number;
   longitude: number;
-  facility_type: string,
+  treatment_type: string,
   pwbd: string;
 }
 

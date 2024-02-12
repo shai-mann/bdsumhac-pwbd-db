@@ -87,7 +87,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
           />
         </TableCell>
         <TableCell>{f.name1}</TableCell>
-        <TableCell>{facilityTypeToFriendlyName(f.facility_type)}</TableCell>
+        <TableCell>{facilityTypeToFriendlyName(f.treatment_type)}</TableCell>
         <TableCell>
           {f.street1}
           {f.street2 ? `, ${f.street2}` : ""}
