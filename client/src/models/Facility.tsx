@@ -17,6 +17,10 @@ interface Facility {
   latitude: number;
   longitude: number;
   treatment_type: string,
+  inpatient: boolean,
+  outpatient: boolean,
+  partial_hospitalization: boolean,
+  residential: boolean,
   pwbd: string;
 }
 

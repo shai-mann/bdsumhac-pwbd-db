@@ -78,19 +78,26 @@ export const getFacilityTypeFilters = async () => {
 
 export const updateFacilities = async (
   email: string,
-  edits: [String, String][]
+  edits: [String, String][],
+  name?: string,
+  explanation?: string
 ) => {
   try {
-    var body: KeyValue = {};
+    var facilities: KeyValue = {};
     for (let [id, pwbd] of edits) {
-      body = {
-        ...body,
+      facilities = {
+        ...facilities,
         [id as string]: pwbd,
       };
     }
     const response = await axios.post(
-      `${SERVER_API_URL}/facilities/edit?email=${email}`,
-      body
+      `${SERVER_API_URL}/facilities/edit?email=${email}${
+        name ? `&name=${name}` : ""
+      }`,
+      {
+        facilities,
+        explanation,
+      }
     );
     return response.data;
   } catch (error) {
