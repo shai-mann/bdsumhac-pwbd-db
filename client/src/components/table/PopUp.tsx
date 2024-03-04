@@ -59,6 +59,7 @@ export const PopUp: FC<PopUpProps> = ({ edits, show, onSubmit, onCancel }) => {
           type="reason"
           color="secondary"
           placeholder="Explain further why you know the edits are correct."
+          helperText="Providing a reason for your edit allows us to understand where you got the information."
           onChange={(e) => setExplanation(e.target.value)}
           margin="dense"
           size="small"
