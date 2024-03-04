@@ -1,5 +1,6 @@
 import * as historyDao from "./history-dao.js";
 import * as facilitiesDao from "./facilities-dao.js";
+import { sendEmail } from "./mailer.js";
 
 const exists = (field) => field && field.length !== 0;
 const stringExists = (field) => field && field !== "";
@@ -95,6 +96,8 @@ const AppController = (app) => {
     const explanation = req.body.explanation; // optional: may not exist
     const facilities = req.body.facilities;
 
+    let facilitiesInfo = [];
+
     if (!email || email === "") return res.sendStatus(401);
     var anyFailed = false;
     for (let [id, pwbd] of Object.entries(facilities)) {
@@ -104,18 +107,30 @@ const AppController = (app) => {
           anyFailed = true;
           continue;
         }
+
+        facilitiesInfo = facilitiesInfo.concat([{id, name: facility.name1, pwbd}]);
       } catch (error) {
+        console.log(error);
         anyFailed = true;
         continue;
       }
 
       await facilitiesDao.updateFacility(id, pwbd);
-      await historyDao.createEdit({ email, facility: id, name, explanation, pwbd });
+      await historyDao.createEdit({
+        email,
+        facility: id,
+        name,
+        explanation,
+        pwbd,
+      });
     }
 
     if (anyFailed) {
       return res.sendStatus(500);
     }
+
+    // send email notifying Kate of updates
+    sendEmail(email, facilitiesInfo, name, explanation);
 
     return res.sendStatus(200);
   };
