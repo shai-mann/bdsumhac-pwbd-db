@@ -11,7 +11,7 @@ import { updateFacilities } from "../../services/app-service";
 import { Dropdown } from "primereact/dropdown";
 import { PWBD_DROPDOWN_OPTIONS } from "../Home";
 import { PopUp } from "./PopUp";
-import { facilityTypeToFriendlyName } from "../../util/utils";
+import { facilityTypeToFriendlyString, treatmentTypeToFriendlyName } from "../../util/utils";
 import { LightTooltip } from "./LightToolTip";
 
 interface TableProps {
@@ -94,7 +94,8 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
             <p>{f.name1}</p>
           </LightTooltip>
         </TableCell>
-        <TableCell>{facilityTypeToFriendlyName(f.treatment_type)}</TableCell>
+        <TableCell>{facilityTypeToFriendlyString(f)}</TableCell>
+        <TableCell>{treatmentTypeToFriendlyName(f.treatment_type)}</TableCell>
         <TableCell>
           {f.street1}
           {f.street2 ? `, ${f.street2}` : ""}
@@ -156,6 +157,7 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
               <TableCell>Accepts blood disorders</TableCell>
               <TableCell>Facility Name</TableCell>
               <TableCell>Facility Type</TableCell>
+              <TableCell>Treatment Type</TableCell>
               <TableCell>Address</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Website</TableCell>
