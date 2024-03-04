@@ -11,7 +11,10 @@ import { updateFacilities } from "../../services/app-service";
 import { Dropdown } from "primereact/dropdown";
 import { PWBD_DROPDOWN_OPTIONS } from "../Home";
 import { PopUp } from "./PopUp";
-import { facilityTypeToFriendlyString, treatmentTypeToFriendlyName } from "../../util/utils";
+import {
+  facilityTypeToFriendlyString,
+  treatmentTypeToFriendlyName,
+} from "../../util/utils";
 import { LightTooltip } from "./LightToolTip";
 
 interface TableProps {
@@ -36,6 +39,11 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
     const existingF = facilities.find((f1) => f1._id === f._id);
     if (existingF?.pwbd === update) {
       setEditedFacilities(editedFacilities.filter((f1) => f1[0] !== f._id)); // remove edit
+    } else if (editedFacilities.map(f => f[0]).includes(existingF?._id || '')) {
+      // if edit already exists, but new edit is being made that isn't just reverting the old one
+      setEditedFacilities(
+        editedFacilities.map((f1) => (f1[0] === f._id ? [f._id, update] : f1))
+      );
     } else {
       setEditedFacilities(editedFacilities.concat([[f._id, update]])); // add edit
     }
@@ -47,13 +55,13 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
   };
 
   const handleSubmitModal = (name?: string, explanation?: string) => {
-    sendEdits(name, explanation)
-    handleCloseModal()
-  }
+    sendEdits(name, explanation);
+    handleCloseModal();
+  };
 
   const handleCloseModal = () => {
     setShowModal(false);
-  }
+  };
 
   const sendEdits = async (name?: string, explanation?: string) => {
     await updateFacilities(email, editedFacilities, name, explanation);
