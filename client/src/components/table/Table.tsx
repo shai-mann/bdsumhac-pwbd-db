@@ -46,16 +46,17 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
     setShowModal(true);
   };
 
-  const closeModal = (submit: boolean) => {
-    if (submit) {
-      sendEdits();
-    }
+  const handleSubmitModal = (name?: string, explanation?: string) => {
+    sendEdits(name, explanation)
+    handleCloseModal()
+  }
 
+  const handleCloseModal = () => {
     setShowModal(false);
-  };
+  }
 
-  const sendEdits = async () => {
-    await updateFacilities(email, editedFacilities);
+  const sendEdits = async (name?: string, explanation?: string) => {
+    await updateFacilities(email, editedFacilities, name, explanation);
     // update facilities to reflect edits
     for (let [id, pwbd] of editedFacilities) {
       const f = facilities.find((f) => f._id === id);
@@ -121,7 +122,8 @@ const Table: FC<TableProps> = ({ facilities, highlightedFacility }) => {
           <PopUp
             edits={editedFacilities.length}
             show={showModal}
-            closeModal={closeModal}
+            onCancel={handleCloseModal}
+            onSubmit={handleSubmitModal}
           />
           <form
             onSubmit={handleSubmit}
